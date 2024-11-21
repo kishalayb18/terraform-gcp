@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket = "terraform-default-bucket"
+    bucket = "terraform-cloudplay-bucket"
     prefix = "terraform/state"
   }
 }

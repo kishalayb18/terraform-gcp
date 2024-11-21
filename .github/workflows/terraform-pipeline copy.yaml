@@ -1,0 +1,40 @@
+name: Terraform Apply Workflow
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    name: Terraform Apply Workflow
+    runs-on: ubuntu-latest
+    env:
+      GOOGLE_CREDENTIALS: ${{ secrets.GCP_SA_CREDENTIALS }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+
+      - name: Terraform Init
+        run: terraform init -backend-config="path=terraform.${{ github.event.inputs.env || 'dev' }}.tfvars"
+        working-directory: ./terraform
+
+      - name: Terraform Format Check
+        run: terraform fmt -check
+        working-directory: ./terraform
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: ./terraform
+
+      - name: Terraform Plan
+        run: terraform plan -var-file="${{ github.event.inputs.env || 'dev' }}.tfvars"
+        working-directory: ./terraform
+
+      - name: Terraform Apply
+        run: terraform apply -var-file="${{ github.event.inputs.env || 'dev' }}.tfvars" --auto-approve
+        working-directory: ./terraform
