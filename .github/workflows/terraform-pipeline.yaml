@@ -32,7 +32,7 @@ jobs:
         run: terraform plan -var-file=${{ env.TF_ENV }}.tfvars
         working-directory: ${{ env.TF_WORKING_DIR }}
         env:
-          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+          GCP_SA_CREDENTIALS: ${{ secrets.GCP_SA_CREDENTIALS }}
 
   apply:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -58,4 +58,4 @@ jobs:
         run: terraform apply -var-file=${{ env.TF_ENV }}.tfvars -auto-approve
         working-directory: ${{ env.TF_WORKING_DIR }}
         env:
-          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+          GCP_SA_CREDENTIALS: ${{ secrets.GCP_SA_CREDENTIALS }}
