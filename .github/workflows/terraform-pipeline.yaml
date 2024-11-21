@@ -1,61 +1,36 @@
-name: Terraform CI/CD Pipeline
-
+name: Terraform PR Workflow
 on:
   pull_request:
-    types: [opened, synchronize]
-  push:
     branches:
       - main
 
-env:
-  TF_WORKING_DIR: ./terraform
-  TF_ENV: dev # Default to dev, can override in the job.
-
 jobs:
-  plan:
-    if: github.event_name == 'pull_request'
+  terraform:
+    name: Terraform PR Checks
     runs-on: ubuntu-latest
+    env:
+      GOOGLE_CREDENTIALS: ${{ secrets.GCP_SA_CREDENTIALS }}
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Setup Terraform
+      - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.6.0
+          terraform_version: 1.5.0
 
       - name: Terraform Init
-        run: terraform init
-        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform init -backend-config="path=terraform.${{ github.event.inputs.env || 'dev' }}.tfvars"
+        working-directory: ./terraform-directory
+
+      - name: Terraform Format Check
+        run: terraform fmt -check
+        working-directory: ./terraform-directory
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: ./terraform-directory
 
       - name: Terraform Plan
-        run: terraform plan -var-file=${{ env.TF_ENV }}.tfvars
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        env:
-          GCP_SA_CREDENTIALS: ${{ secrets.GCP_SA_CREDENTIALS }}
-
-  apply:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: plan
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.6.0
-
-      - name: Terraform Init
-        run: terraform init
-        working-directory: ${{ env.TF_WORKING_DIR }}
-
-      - name: Wait for Approval
-        uses: hmarr/auto-approve-action@v2
-
-      - name: Terraform Apply
-        run: terraform apply -var-file=${{ env.TF_ENV }}.tfvars -auto-approve
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        env:
-          GCP_SA_CREDENTIALS: ${{ secrets.GCP_SA_CREDENTIALS }}
+        run: terraform plan -var-file="terraform.${{ github.event.inputs.env || 'dev' }}.tfvars"
+        working-directory: ./terraform-directory
