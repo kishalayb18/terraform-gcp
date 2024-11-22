@@ -8,7 +8,7 @@ resource "google_compute_subnetwork" "public_subnet" {
   name                     = "${var.subnet_names[1]}-${var.region}-${count.index}"
   region                   = var.region
   network                  = google_compute_network.vpc.name
-  ip_cidr_range            = var.public_subnet_cidr_ranges[0]
+  ip_cidr_range            = var.public_subnet_cidr_ranges[count.index]
   private_ip_google_access = false
 }
 
@@ -17,6 +17,6 @@ resource "google_compute_subnetwork" "private_subnet" {
   name                     = "${var.subnet_names[1]}-${var.region}-${count.index}"
   region                   = var.region
   network                  = google_compute_network.vpc.name
-  ip_cidr_range            = var.private_subnet_cidr_ranges[0]
+  ip_cidr_range            = var.private_subnet_cidr_ranges[count.index]
   private_ip_google_access = true
 }
