@@ -34,7 +34,7 @@ jobs:
         working-directory: terraform
         env:
           PUBLICCIDR: ${{ vars.PUBLICCIDR }}
-        run: 
+        run: | 
           ls
           envsubst < prod.tfvars > prodnew.tfvars
           rm prod.tfvars
