@@ -31,9 +31,9 @@ jobs:
           terraform_version: 1.5.0
 
       - name: injectValues
+        working-directory: terraform
         env:
           PUBLICCIDR: ${{ vars.PUBLICCIDR }}
-        working-directory: terraform
         run: 
           ls
           envsubst < prod.tfvars > prodnew.tfvars
