@@ -1,65 +1,85 @@
-name: Terraform PR Workflow
-# on:
-  # pull_request:
-  #   branches:
-  #     - main
+name: Terraform Workflow
+
 on:
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       env:
-        description: 'allowed environments : dev | prod'
+        description: 'Allowed environments: dev | prod'
         required: true
       approval:
-        description: 'PR approved : true | false'
+        description: 'Apply changes: true | false'
         required: true
-
 
 jobs:
   terraform:
-    name: Terraform PR Checks
+    name: Terraform Workflow
     runs-on: ubuntu-latest
-    environment: dev
     env:
       GOOGLE_CREDENTIALS: ${{ secrets.GCP_SA_CREDENTIALS }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Determine Modified Environment
+        id: check_env
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          MODIFIED_ENV=""
+          if git diff --name-only HEAD^ HEAD | grep -q "dev.tfvars"; then
+            MODIFIED_ENV="dev"
+          elif git diff --name-only HEAD^ HEAD | grep -q "prod.tfvars"; then
+            MODIFIED_ENV="prod"
+          fi
+          echo "MODIFIED_ENV=${MODIFIED_ENV}" >> $GITHUB_ENV
+
+      - name: Log Selected Environment
+        run: |
+          SELECTED_ENV=${MODIFIED_ENV:-${{ github.event.inputs.env }}}
+          echo "Using environment: $SELECTED_ENV"
+          echo "SELECTED_ENV=$SELECTED_ENV" >> $GITHUB_ENV
+
+      - name: Fail if No Relevant Changes (for PR)
+        if: ${{ github.event_name == 'pull_request' && env.MODIFIED_ENV == '' }}
+        run: |
+          echo "No tfvars files (dev, sit, prod) were modified. Exiting..."
+          exit 1
+
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.0
 
-      - name: injectValues
+      - name: Inject Values
         working-directory: terraform
-        env:
-          PUBLICCIDR: ${{ vars.PUBLICCIDR }}
-          # PUBLICCIDR: ${{ secrets.PUBLICCIDR }}
-        run: | 
-          ls
-          envsubst < prod.tfvars > prodnew.tfvars
-          rm prod.tfvars
-          mv prodnew.tfvars prod.tfvars
-          cat prod.tfvars
+        run: |
+          if [ -f "${SELECTED_ENV}.tfvars" ]; then
+            envsubst < "${SELECTED_ENV}.tfvars" > temp.tfvars
+            mv temp.tfvars "${SELECTED_ENV}.tfvars"
+            cat "${SELECTED_ENV}.tfvars"
+          else
+            echo "Environment file not found!"
+            exit 1
 
       - name: Terraform Init
-        run: terraform init
         working-directory: ./terraform
+        run: terraform init
 
       - name: Terraform Format Check
-        run: terraform fmt
         working-directory: ./terraform
+        run: terraform fmt
 
       - name: Terraform Validate
-        run: terraform validate
         working-directory: ./terraform
+        run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan -var-file="${{ github.event.inputs.env || 'dev' }}.tfvars"
         working-directory: ./terraform
+        run: terraform plan -var-file="${SELECTED_ENV}.tfvars"
 
       - name: Terraform Apply
         working-directory: ./terraform
-        if: ${{ github.event.inputs.approval == 'true' }}
-        run: terraform apply -var-file="${{ github.event.inputs.env || 'dev' }}.tfvars" --auto-approve
-        
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.approval == 'true' }}
+        run: terraform apply -var-file="${SELECTED_ENV}.tfvars" --auto-approve
