@@ -33,13 +33,13 @@ jobs:
       - name: injectValues
         env:
           PUBLICCIDR: ${{ vars.PUBLICCIDR }}
-        # working-directory: terraform
+        working-directory: terraform
         run: 
           ls
-          envsubst < terraform/prod.tfvars > terraform/prodnew.tfvars
-          rm terraform/prod.tfvars
-          mv terraform/prodnew.tfvars terraform/prod.tfvars
-          cat terraform/prod.tfvars
+          envsubst < prod.tfvars > prodnew.tfvars
+          rm prod.tfvars
+          mv prodnew.tfvars prod.tfvars
+          cat prod.tfvars
 
       - name: Terraform Init
         run: terraform init
