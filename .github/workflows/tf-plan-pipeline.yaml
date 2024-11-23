@@ -7,10 +7,10 @@ on:
   workflow_dispatch:
     inputs:
       env:
-        description: 'workflow dispatch'
+        description: 'allowed environments : dev | prod'
         required: true
       approval:
-        description: 'PR approved'
+        description: 'PR approved : true | false'
         required: true
 
 
@@ -47,6 +47,6 @@ jobs:
 
       - name: Terraform Apply
         working-directory: ./terraform
-        if: ${{ github.event.inputs.approval == true }}
+        if: ${{ github.event.inputs.approval == 'true' }}
         run: terraform apply -var-file="${{ github.event.inputs.env || 'dev' }}.tfvars" --auto-approve
         
