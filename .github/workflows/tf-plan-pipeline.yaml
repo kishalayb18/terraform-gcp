@@ -1,4 +1,4 @@
-name: Terraform Workflow
+name: Terraform Manual Workflow
 
 on:
   pull_request:
@@ -7,51 +7,30 @@ on:
   workflow_dispatch:
     inputs:
       env:
-        description: 'Allowed environments: dev | prod'
+        description: 'Select the environment'
         required: true
+        type: choice
+        default: dev
+        options:
+          - dev
+          - prod
       approval:
-        description: 'Apply changes: true | false'
+        description: 'terraform apply'
         required: true
+        type: boolean
+        default: false
 
 jobs:
-  terraform:
-    name: Terraform Workflow
+  terraformplan:
+    name: Terraform Plan
     runs-on: ubuntu-latest
+    environment:
+      name: Plan
     env:
       GOOGLE_CREDENTIALS: ${{ secrets.GCP_SA_CREDENTIALS }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-
-      - name: Determine Modified Environment
-        id: check_env
-        working-directory: ./terraform/env
-        if: ${{ github.event_name == 'pull_request' }}
-        run: |
-          MODIFIED_ENV=""
-          if git diff --name-only HEAD^ HEAD | grep -q "env/dev.tfvars"; then
-            MODIFIED_ENV="dev"
-          elif git diff --name-only HEAD^ HEAD | grep -q "env/prod.tfvars"; then
-            MODIFIED_ENV="prod"
-          fi
-          echo "MODIFIED_ENV=${MODIFIED_ENV}" >> $GITHUB_ENV
-
-      - name: Log Selected Environment
-        run: |
-          if [ -n "$MODIFIED_ENV" ]; then
-            SELECTED_ENV="$MODIFIED_ENV"
-          else
-            SELECTED_ENV="${{ github.event.inputs.env }}"
-          fi
-          echo "Using environment: $SELECTED_ENV"
-          echo "SELECTED_ENV=$SELECTED_ENV" >> $GITHUB_ENV
-
-
-      - name: Fail if No Relevant Changes (for PR)
-        if: ${{ github.event_name == 'pull_request' && env.MODIFIED_ENV == '' }}
-        run: |
-          echo "No tfvars files (dev, prod) were modified. Exiting..."
-          # exit 1
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
@@ -72,9 +51,13 @@ jobs:
 
       - name: Terraform Plan
         working-directory: ./terraform
-        run: terraform plan -var-file="env/${SELECTED_ENV}.tfvars"
+        run: terraform plan -var-file="env/${{ github.event.inputs.env }}.tfvars"
+        # run: terraform plan -var-file="env/${SELECTED_ENV}.tfvars"
 
       - name: Terraform Apply
         working-directory: ./terraform
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.approval == 'true' }}
-        run: terraform apply -var-file="env/${SELECTED_ENV}.tfvars" --auto-approve
+        run: terraform apply -var-file="env/${{ github.event.inputs.env }}.tfvars" --auto-approve
+        # run: terraform plan -var-file="env/${{ github.event.inputs.env }}.tfvars"
+
+  
