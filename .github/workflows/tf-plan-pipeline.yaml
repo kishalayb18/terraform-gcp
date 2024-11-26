@@ -7,13 +7,18 @@ on:
   workflow_dispatch:
     inputs:
       env:
-        description: 'workflow dispatch'
+        description: 'allowed environments : dev | prod'
         required: true
+      approval:
+        description: 'PR approved : true | false'
+        required: true
+
 
 jobs:
   terraform:
     name: Terraform PR Checks
     runs-on: ubuntu-latest
+    environment: dev
     env:
       GOOGLE_CREDENTIALS: ${{ secrets.GCP_SA_CREDENTIALS }}
     steps:
@@ -24,6 +29,18 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.0
+
+      - name: injectValues
+        working-directory: terraform
+        env:
+          PUBLICCIDR: ${{ vars.PUBLICCIDR }}
+          # PUBLICCIDR: ${{ secrets.PUBLICCIDR }}
+        run: | 
+          ls
+          envsubst < prod.tfvars > prodnew.tfvars
+          rm prod.tfvars
+          mv prodnew.tfvars prod.tfvars
+          cat prod.tfvars
 
       - name: Terraform Init
         run: terraform init
@@ -40,3 +57,9 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -var-file="${{ github.event.inputs.env || 'dev' }}.tfvars"
         working-directory: ./terraform
+
+      - name: Terraform Apply
+        working-directory: ./terraform
+        if: ${{ github.event.inputs.approval == 'true' }}
+        run: terraform apply -var-file="${{ github.event.inputs.env || 'dev' }}.tfvars" --auto-approve
+        
