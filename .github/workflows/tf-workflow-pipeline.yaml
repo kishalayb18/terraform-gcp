@@ -1,21 +1,18 @@
-name: Terraform Workflow Pipeline
+name: Terraform Provisioning Workflow
 
 on:
-  # pull_request:
-  #   branches:
-  #     - main
   workflow_dispatch:
     inputs:
       env:
         description: 'Select the environment'
         required: true
         type: choice
-        default: dev
         options:
           - dev
           - prod
+        default: dev
       approval:
-        description: 'terraform apply'
+        description: 'terraform apply approval:'
         required: true
         type: boolean
         default: false
