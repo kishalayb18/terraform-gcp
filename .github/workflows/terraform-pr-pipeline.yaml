@@ -1,6 +1,6 @@
-name: Terraform Apply Workflow
+name: Terraform PR Pipeline
 on:
-  push:
+  pull_request:
     branches:
       - main
 
@@ -31,10 +31,10 @@ jobs:
         run: terraform validate
         working-directory: ./terraform
 
-      - name: Terraform Plan
-        run: terraform plan -var-file="${{ github.event.inputs.env || 'dev' }}.tfvars"
+      - name: Terraform Plan for dev
+        run: terraform plan -var-file="env/dev.tfvars"
         working-directory: ./terraform
 
-      - name: Terraform Apply
-        run: terraform apply -var-file="${{ github.event.inputs.env || 'dev' }}.tfvars" --auto-approve
+      - name: Terraform Plan for prod
+        run: terraform plan -var-file="env/prod.tfvars"
         working-directory: ./terraform

@@ -1,4 +1,4 @@
-name: Terraform Manual Workflow
+name: Terraform Workflow Pipeline
 
 on:
   # pull_request:
