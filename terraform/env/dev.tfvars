@@ -2,5 +2,5 @@ project_id         = "cloudplay-437100"
 region             = "us-central1"
 vpc_name           = "custom-vpc"
 subnet_names       = ["private-subnet", "public-subnet"]
-public_subnet_cidr_ranges = ["10.0.1.160/16"]
-private_subnet_cidr_ranges = ["10.0.0.0/16", "10.0.0.48/16", "10.0.0.32/16"]
+public_subnet_cidr_ranges = ["10.0.7.0/24"]
+private_subnet_cidr_ranges = ["10.0.0.0/24", "10.0.1.0/24", "10.0.2.0/24"]
