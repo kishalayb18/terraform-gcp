@@ -31,7 +31,7 @@ jobs:
         run: terraform validate
         working-directory: ./terraform
 
-      - name: Terraform Plan for dev
+      - name: Terraform Plan
         run: terraform plan -var-file="env/dev.tfvars"
         working-directory: ./terraform
 
@@ -62,6 +62,6 @@ jobs:
         run: terraform validate
         working-directory: ./terraform
 
-      - name: Terraform Plan for prod
+      - name: Terraform Plan
         run: terraform plan -var-file="env/prod.tfvars"
         working-directory: ./terraform
