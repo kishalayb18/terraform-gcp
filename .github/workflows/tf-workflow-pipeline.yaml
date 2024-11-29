@@ -51,11 +51,6 @@ jobs:
         run: terraform plan -var-file="env/${{ github.event.inputs.env }}.tfvars"
         # run: terraform plan -var-file="env/${SELECTED_ENV}.tfvars"
 
-      # - name: Terraform Apply
-      #   working-directory: terraform
-      #   if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.approval == 'true' }}
-      #   run: terraform apply -var-file="env/${{ github.event.inputs.env }}.tfvars" --auto-approve
-
 
   terraform_apply:
     name: Terraform apply
@@ -79,10 +74,10 @@ jobs:
         run: terraform init
 
       - name: Tf Apply Status 
-        working-directory: terraform
+        working-directory: ./terraform
         run: echo "Terraform Approval Status = ${{github.event.inputs.approval}}"
 
       - name: Terraform Apply
-        working-directory: terraform
+        working-directory: ./terraform
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.approval == 'true' }}
         run: terraform apply -var-file="env/${{ github.event.inputs.env }}.tfvars" --auto-approve
