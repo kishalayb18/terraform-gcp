@@ -25,7 +25,8 @@ resource "google_sql_user" "primaryuser" {
   password = var.database_password
 }
 
-resource "google_sql_database" "primarypassword" {
+
+resource "google_sql_database" "primarydb" {
   name     = "cloud-db"
   instance = google_sql_database_instance.default.name
 }

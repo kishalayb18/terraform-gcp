@@ -84,6 +84,7 @@ jobs:
         env: 
           # PUBLICCIDR: ${{ vars.PUBLICCIDR }}
           # DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
               envsubst < terraform/env/${{ github.event.inputs.env }}.tfvars > terraform/env/${{ github.event.inputs.env }}new.tfvars
