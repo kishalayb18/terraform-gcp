@@ -1,10 +1,12 @@
-project_id         = "cloudplay-437100"
+project_id         = "cloudplay-prod"
+gcs_bucket = "tf-gcs-prd"
 region             = "us-central1"
 vpc_name           = "prod-custom-vpc"
 subnet_names       = ["private-subnet", "public-subnet"]
-# public_subnet_cidr_ranges = ["10.0.0.172/24"]
-public_subnet_cidr_ranges = ["$PUBLICCIDR"]
+# public_subnet_cidr_ranges = ["$PUBLICCIDR"]
+public_subnet_cidr_ranges = ["10.0.0.172/24"]
 private_subnet_cidr_ranges = ["10.0.0.0/24", "10.0.0.48/27"]
 # database_username = "$DB_USERNAME"
+create_db = false
 database_username = "kishalay"
 database_password = "$DB_PASSWORD"

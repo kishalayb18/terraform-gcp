@@ -1,4 +1,5 @@
 resource "google_sql_database_instance" "default" {
+  count = var.create_db ? 1 : 0
   name             = "gcp-db-instance"
   database_version = "POSTGRES_14"
   region           = var.region
@@ -24,7 +25,6 @@ resource "google_sql_user" "primaryuser" {
   instance = google_sql_database_instance.default.name
   password = var.database_password
 }
-
 
 resource "google_sql_database" "primarydb" {
   name     = "cloud-db"
