@@ -1,5 +1,4 @@
 resource "google_sql_database_instance" "default" {
-  count = var.create_db ? 1 : 0
   name             = "gcp-db-instance"
   database_version = "POSTGRES_14"
   region           = var.region

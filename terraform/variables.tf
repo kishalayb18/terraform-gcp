@@ -28,9 +28,9 @@ variable "private_subnet_cidr_ranges" {
   type = list(string)
 }
 
-variable "create_db" {
-  type = bool
-}
+# variable "create_db" {
+#   type = bool
+# }
 
 variable "database_username" {
   type = string
