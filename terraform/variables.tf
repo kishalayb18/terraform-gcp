@@ -8,6 +8,10 @@ variable "region" {
   type        = string
 }
 
+# variable "gcs_bucket" {
+#   type = string
+# }
+
 variable "vpc_name" {
   description = "vpc name"
 }
@@ -23,6 +27,10 @@ variable "public_subnet_cidr_ranges" {
 variable "private_subnet_cidr_ranges" {
   type = list(string)
 }
+
+# variable "create_db" {
+#   type = bool
+# }
 
 variable "database_username" {
   type = string

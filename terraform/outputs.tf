@@ -20,6 +20,7 @@ output "db_username" {
   description = "db username"
   value = google_sql_user.primaryuser.name
 }
+
 output "db_password" {
   description = "db password"
   value = google_sql_user.primaryuser.password

@@ -83,6 +83,7 @@ jobs:
       - name: inject environment values 
         env: 
           # PUBLICCIDR: ${{ vars.PUBLICCIDR }}
+          # DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
