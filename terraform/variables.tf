@@ -23,3 +23,12 @@ variable "public_subnet_cidr_ranges" {
 variable "private_subnet_cidr_ranges" {
   type = list(string)
 }
+
+variable "database_username" {
+  type = string
+}
+
+variable "database_password" {
+  type = string
+  sensitive = true
+}

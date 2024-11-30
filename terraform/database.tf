@@ -19,13 +19,13 @@ resource "google_sql_database_instance" "default" {
   }
 }
 
-resource "google_sql_user" "default" {
-  name     = "kishalay"
+resource "google_sql_user" "primaryuser" {
+  name     = var.database_username
   instance = google_sql_database_instance.default.name
-  password = "kishalay_gcp_db"
+  password = var.database_password
 }
 
-resource "google_sql_database" "default" {
+resource "google_sql_database" "primarypassword" {
   name     = "cloud-db"
   instance = google_sql_database_instance.default.name
 }
