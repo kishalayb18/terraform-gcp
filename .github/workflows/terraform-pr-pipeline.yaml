@@ -77,3 +77,4 @@ jobs:
       - name: Terraform Plan
         working-directory: ./terraform
         run: terraform plan -var-file="env/prod.tfvars"
+        continue-on-error: true

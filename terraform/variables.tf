@@ -7,9 +7,10 @@ variable "region" {
   description = "GCP region"
   type        = string
 }
-variable "gcs_bucket" {
-  type = string
-}
+
+# variable "gcs_bucket" {
+#   type = string
+# }
 
 variable "vpc_name" {
   description = "vpc name"

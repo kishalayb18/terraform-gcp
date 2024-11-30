@@ -1,5 +1,5 @@
 project_id         = "cloudplay-437100"
-gcs_bucket = "terraform-cloudplay-bucket"
+# gcs_bucket = "terraform-cloudplay-bucket"
 region             = "us-central1"
 vpc_name           = "custom-vpc"
 subnet_names       = ["private-subnet", "public-subnet"]

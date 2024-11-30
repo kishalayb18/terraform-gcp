@@ -1,5 +1,5 @@
 project_id         = "cloudplay-prod"
-gcs_bucket = "tf-gcs-prd"
+# gcs_bucket = "tf-gcs-prd"
 region             = "us-central1"
 vpc_name           = "prod-custom-vpc"
 subnet_names       = ["private-subnet", "public-subnet"]
