@@ -5,3 +5,6 @@ subnet_names       = ["private-subnet", "public-subnet"]
 # public_subnet_cidr_ranges = ["10.0.0.172/24"]
 public_subnet_cidr_ranges = ["$PUBLICCIDR"]
 private_subnet_cidr_ranges = ["10.0.0.0/24", "10.0.0.48/27"]
+database_username = "kishalay"
+database_password = "$DB_PASSWORD"
+

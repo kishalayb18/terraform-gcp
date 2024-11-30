@@ -34,6 +34,17 @@ jobs:
         with:
           terraform_version: 1.5.0
 
+      - name: inject environment values 
+        env: 
+          # PUBLICCIDR: ${{ vars.PUBLICCIDR }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+              envsubst < terraform/env/${{ github.event.inputs.env }}.tfvars > terraform/env/${{ github.event.inputs.env }}new.tfvars
+              rm terraform/env/${{ github.event.inputs.env }}.tfvars
+              mv terraform/env/${{ github.event.inputs.env }}new.tfvars terraform/env/${{ github.event.inputs.env }}.tfvars
+              cat terraform/env/${{ github.event.inputs.env }}.tfvars
+
       - name: Terraform Init
         working-directory: ./terraform
         run: terraform init
@@ -68,6 +79,17 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.0
+
+      - name: inject environment values 
+        env: 
+          # PUBLICCIDR: ${{ vars.PUBLICCIDR }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+              envsubst < terraform/env/${{ github.event.inputs.env }}.tfvars > terraform/env/${{ github.event.inputs.env }}new.tfvars
+              rm terraform/env/${{ github.event.inputs.env }}.tfvars
+              mv terraform/env/${{ github.event.inputs.env }}new.tfvars terraform/env/${{ github.event.inputs.env }}.tfvars
+              cat terraform/env/${{ github.event.inputs.env }}.tfvars
 
       - name: Terraform Init
         working-directory: ./terraform
