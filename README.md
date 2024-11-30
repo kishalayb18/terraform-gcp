@@ -1,7 +1,7 @@
 # Terraform Provisioning with Github actions
 
 ## Workflow diagram
-[!Workflow Diagram](workflowtf.png)
+![Workflow Diagram](workflowtf.png)
 
 ## Workflows
 ### 1. PR Check
